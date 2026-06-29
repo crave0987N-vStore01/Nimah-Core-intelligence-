@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#080a0d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="description" content="NIMAH CORE INTELLIGENCE — Premium AI Assistant">
+<title>NIMAH CORE INTELLIGENCE</title>
+<link rel="icon" href="https://i.ibb.co/fVytxZx2/file-000000000588720986999f59e04491dd.png">
+<link rel="apple-touch-icon" href="https://i.ibb.co/fVytxZx2/file-000000000588720986999f59e04491dd.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#09090b;
+  --bg2:#0f0f12;
+  --bg3:#141417;
+  --surface:#18181b;
+  --surface2:#1f1f23;
+  --border:#27272a;
+  --border2:#3f3f46;
+  --primary:#06b6d4;
+  --primary2:#0891b2;
+  --primary-dim:rgba(6,182,212,.12);
+  --text:#fafafa;
+  --text2:#a1a1aa;
+  --text3:#52525b;
+  --user-bubble:#0e7490;
+  --ai-bubble:#111113;
+  --danger:#ef4444;
+  --success:#22c55e;
+  --warning:#f59e0b;
+  --radius:12px;
+  --radius-sm:8px;
+  --font:'Inter',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+  --safe-left:env(safe-area-inset-left,0px);
+  --safe-right:env(safe-area-inset-right,0px);
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased;font-size:14px;line-height:1.5}
+#app{width:100%;height:100%;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.screen{position:absolute;inset:0;display:none;flex-direction:column;background:var(--bg);overflow:hidden}
+.screen.active{display:flex}
+img{display:block;max-width:100%}
+button{font-family:var(--font);cursor:pointer;border:none;background:none}
+textarea,input{font-family:var(--font)}
+input[type=file]{display:none}
+
+/* ═══ SPLASH ═══ */
+#splash{align-items:center;justify-content:center;background:#09090b;z-index:999}
+.spl-inner{display:flex;flex-direction:column;align-items:center;gap:0;position:relative;z-index:2}
+.spl-glow{position:absolute;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(6,182,212,.09) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);animation:splGlow 3s ease-in-out infinite;pointer-events:none}
+@keyframes splGlow{0%,100%{opacity:.5;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}}
+.spl-logo{width:80px;height:80px;object-fit:contain;border-radius:18px;opacity:0;animation:logoIn .9s .2s cubic-bezier(.22,1,.36,1) forwards;filter:drop-shadow(0 0 20px rgba(6,182,212,.4))}
+@keyframes logoIn{0%{opacity:0;transform:scale(.7) translateY(8px)}70%{opacity:1;transform:scale(1.04)}100%{opacity:1;transform:scale(1)}}
+.spl-name{font-size:13px;font-weight:800;letter-spacing:4px;text-transform:uppercase;color:#fff;margin-top:22px;opacity:0;animation:wordIn .6s .8s cubic-bezier(.22,1,.36,1) forwards;text-align:center;white-space:nowrap}
+.spl-sub{font-size:10px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-top:6px;opacity:0;animation:wordIn .6s 1s forwards;text-align:center}
+.spl-bar-wrap{margin-top:44px;opacity:0;animation:fadeI .4s 1.2s forwards}
+.spl-bar{width:100px;height:1px;background:rgba(255,255,255,.06);border-radius:1px;overflow:hidden}
+.spl-fill{height:100%;width:0;background:linear-gradient(90deg,transparent,rgba(6,182,212,.8),transparent);animation:barFill 2s 1.2s ease-out forwards}
+@keyframes barFill{0%{width:0}100%{width:100%}}
+@keyframes wordIn{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:none}}
+@keyframes fadeI{0%{opacity:0}100%{opacity:1}}
+
+/* ═══ HEADER ═══ */
+.header{display:flex;align-items:center;gap:6px;padding:0 12px;padding-top:var(--safe-top);background:rgba(9,9,11,.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);flex-shrink:0;height:calc(50px + var(--safe-top));z-index:50;position:relative}
+.hlogo{width:26px;height:26px;object-fit:contain;border-radius:6px;flex-shrink:0}
+.htitle{flex:1;font-size:13px;font-weight:700;color:var(--text);letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.htitle b,.htitle span{color:var(--primary)}
+.hbtn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;color:var(--text2);flex-shrink:0}
+.hbtn:active{background:var(--surface2);border-color:var(--primary);color:var(--primary)}
+.hbtn-text{padding:0 10px;width:auto;font-size:10px;font-weight:700;letter-spacing:.5px}
+.status-dot{width:5px;height:5px;border-radius:50%;background:var(--success);box-shadow:0 0 5px var(--success);flex-shrink:0;animation:blink 2.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ═══ SCROLLABLE BODY ═══ */
+.body{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+
+/* ═══ HOME ═══ */
+#home .body{display:flex;flex-direction:column;padding:12px 12px 0}
+.home-hero{text-align:center;padding:8px 0 12px;flex-shrink:0}
+.hero-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;border:1px solid rgba(6,182,212,.2);background:rgba(6,182,212,.06);font-size:9.5px;font-weight:600;color:var(--primary);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
+.hero-logo{width:44px;height:44px;object-fit:contain;margin:0 auto 10px;border-radius:10px;filter:drop-shadow(0 0 12px rgba(6,182,212,.35));animation:float 5s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.hero-eyebrow{font-size:9.5px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--text3);margin-bottom:4px}
+.hero-headline{font-size:19px;font-weight:800;color:var(--text);line-height:1.15;letter-spacing:-.4px;margin-bottom:6px}
+.hero-tagline{display:flex;justify-content:center;gap:0;font-size:10px;color:var(--text3);font-weight:400}
+.hero-tagline span{padding:0 7px}
+.hero-tagline span+span{border-left:1px solid var(--border)}
+
+/* ═══ FEATURE CARDS ═══ */
+.cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;flex-shrink:0;margin-bottom:10px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden;min-height:90px}
+.card:active{transform:scale(.97);border-color:rgba(6,182,212,.3);background:var(--surface2)}
+.card-icon{width:28px;height:28px;border-radius:7px;background:var(--primary-dim);border:1px solid rgba(6,182,212,.12);display:flex;align-items:center;justify-content:center;margin-bottom:7px;color:var(--primary);flex-shrink:0}
+.card-title{font-size:11.5px;font-weight:700;color:var(--text);margin-bottom:2px}
+.card-desc{font-size:10.5px;color:var(--text3);line-height:1.35}
+
+/* ═══ INPUT BAR (Claude-style) ═══ */
+.input-wrap{flex-shrink:0;padding:8px 12px;padding-bottom:calc(8px + var(--safe-bottom));background:rgba(9,9,11,.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.input-float{background:var(--surface);border:1px solid var(--border2);border-radius:22px;transition:border-color .2s,box-shadow .2s}
+.input-float:focus-within{border-color:rgba(6,182,212,.4);box-shadow:0 0 0 3px rgba(6,182,212,.06)}
+.input-toolbar{display:flex;align-items:center;gap:4px;padding:8px 10px 0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.input-toolbar::-webkit-scrollbar{display:none}
+.itbtn{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:20px;border:1px solid var(--border);background:transparent;cursor:pointer;font-size:11px;color:var(--text2);transition:all .15s;white-space:nowrap;flex-shrink:0}
+.itbtn img{border-radius:3px}
+.itbtn:active{border-color:rgba(6,182,212,.35);color:var(--primary);background:var(--primary-dim)}
+.attach-strip{display:flex;gap:5px;flex-wrap:wrap;padding:5px 10px 0}
+.attach-chip{display:flex;align-items:center;gap:4px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:3px 7px;font-size:10.5px;color:var(--text2)}
+.attach-chip button{background:none;border:none;color:var(--text3);cursor:pointer;display:flex;align-items:center;padding:0;margin-left:2px;line-height:1}
+.input-row{display:flex;align-items:flex-end;gap:4px;padding:5px 6px 6px 12px}
+.input-txt{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:13.5px;line-height:1.5;resize:none;max-height:96px;min-height:22px;padding:4px 0}
+.input-txt::placeholder{color:var(--text3)}
+.input-actions{display:flex;align-items:center;gap:3px;flex-shrink:0}
+.iabtn{width:30px;height:30px;border-radius:8px;background:transparent;border:none;display:flex;align-items:center;justify-content:center;color:var(--text3);transition:all .15s;cursor:pointer}
+.iabtn:active{color:var(--primary);background:var(--primary-dim)}
+.send-btn{width:32px;height:32px;border-radius:10px;border:none;background:var(--primary);color:#000;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0}
+.send-btn:active{background:var(--primary2);transform:scale(.93)}
+.send-btn:disabled{background:var(--border);color:var(--text3);cursor:not-allowed;transform:none}
+.disclaimer{text-align:center;font-size:9.5px;color:var(--text3);padding:5px 0 0;line-height:1.35}
+
+/* ═══ CHAT MSGS ═══ */
+#chat .msgs{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px 12px 6px;display:flex;flex-direction:column;gap:2px;-webkit-overflow-scrolling:touch}
+.mg{display:flex;flex-direction:column;margin-bottom:4px}
+.mg.user{align-items:flex-end}
+.mg.ai{align-items:flex-start}
+.mg-meta{display:flex;align-items:center;gap:5px;margin-bottom:3px}
+.mg-av{width:20px;height:20px;border-radius:5px;object-fit:contain;background:var(--surface);border:1px solid var(--border);padding:2px;flex-shrink:0}
+.mg-name{font-size:10.5px;font-weight:600;color:var(--primary)}
+.bubble{max-width:82%;padding:8px 12px;border-radius:16px;font-size:13px;line-height:1.6;word-break:break-word;animation:bubIn .18s ease}
+@keyframes bubIn{0%{opacity:0;transform:translateY(5px)}100%{opacity:1;transform:none}}
+.bubble.user{background:var(--user-bubble);color:#fff;border-bottom-right-radius:3px;font-weight:500}
+.bubble.ai{background:var(--ai-bubble);color:var(--text);border:1px solid var(--border);border-bottom-left-radius:3px}
+.ts{font-size:9px;margin-top:2px;opacity:.5}
+.bubble.user .ts{text-align:right;color:rgba(255,255,255,.7)}
+.bubble.ai .ts{color:var(--text3)}
+.msg-acts{display:flex;gap:4px;margin-top:3px;flex-wrap:wrap}
+.mabtn{display:flex;align-items:center;gap:3px;padding:3px 7px;border-radius:20px;border:1px solid var(--border);background:var(--surface);font-size:10px;color:var(--text2);cursor:pointer;transition:all .12s}
+.mabtn:active{color:var(--primary);border-color:rgba(6,182,212,.3)}
+.bubble.ai pre{background:#0a0b0e;border:1px solid var(--border);border-radius:8px;padding:9px;margin:6px 0;overflow-x:auto;font-family:var(--font-mono);font-size:11px;line-height:1.55}
+.bubble.ai code{font-family:var(--font-mono);font-size:11px;background:rgba(6,182,212,.08);padding:1px 4px;border-radius:3px}
+.bubble.ai pre code{background:transparent;padding:0}
+.bubble.ai strong{font-weight:700;color:rgba(6,182,212,.9)}
+.bubble.ai em{color:var(--text2)}
+.bubble.ai h1,.bubble.ai h2,.bubble.ai h3{margin:7px 0 3px;color:var(--text);font-size:13.5px}
+.bubble.ai ul,.bubble.ai ol{padding-left:14px;margin:3px 0}
+.bubble.ai li{margin:2px 0}
+.bubble.ai hr{border:none;border-top:1px solid var(--border);margin:7px 0}
+.bubble.ai a{color:var(--primary);text-decoration:none}
+.typing{display:flex;align-items:center;gap:4px;padding:9px 13px;background:var(--ai-bubble);border:1px solid var(--border);border-radius:16px;border-bottom-left-radius:3px;width:fit-content}
+.tdot{width:5px;height:5px;border-radius:50%;background:var(--text3);animation:tB 1.1s ease-in-out infinite}
+.tdot:nth-child(2){animation-delay:.16s}
+.tdot:nth-child(3){animation-delay:.32s}
+@keyframes tB{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-4px);opacity:1}}
+
+/* ═══ TOAST ═══ */
+.toast{position:fixed;bottom:calc(var(--ibar-h,80px) + var(--safe-bottom) + 10px);left:50%;transform:translateX(-50%) translateY(14px);background:rgba(24,24,27,.97);border:1px solid var(--border2);color:var(--text);padding:7px 14px;border-radius:20px;font-size:11.5px;z-index:900;opacity:0;transition:all .24s;pointer-events:none;backdrop-filter:blur(16px);max-width:calc(100vw - 24px);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.warn{border-color:var(--warning);color:var(--warning)}
+.toast.err{border-color:var(--danger);color:var(--danger)}
+.toast.ok{border-color:var(--success);color:var(--success)}
+
+/* ═══ SIDEBAR ═══ */
+.sb-ov{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;opacity:0;pointer-events:none;transition:opacity .25s}
+.sb-ov.on{opacity:1;pointer-events:all}
+.sidebar{position:fixed;top:0;left:0;bottom:0;width:78%;max-width:280px;background:var(--bg2);border-right:1px solid var(--border);z-index:101;transform:translateX(-100%);transition:transform .26s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;padding-top:var(--safe-top);padding-bottom:var(--safe-bottom)}
+.sidebar.on{transform:none}
+.sb-head{padding:16px 12px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.sb-logo{width:26px;height:26px;object-fit:contain;border-radius:6px}
+.sb-title{font-size:11.5px;font-weight:700;flex:1;color:var(--text);letter-spacing:.2px;line-height:1.2}
+.sb-close{width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3)}
+.sb-new{margin:8px;padding:9px 11px;border-radius:var(--radius-sm);border:1px dashed var(--border2);background:none;color:var(--text3);font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px;width:calc(100% - 16px);transition:all .15s}
+.sb-new:active{background:var(--primary-dim);color:var(--primary);border-color:rgba(6,182,212,.3)}
+.sb-sec{padding:8px 12px 2px;font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase}
+.sb-list{flex:1;overflow-y:auto;padding:0 4px}
+.sb-item{padding:8px 9px;border-radius:var(--radius-sm);cursor:pointer;transition:all .1s;display:flex;align-items:center;gap:6px;color:var(--text2);font-size:12px}
+.sb-item:active,.sb-item.on{background:rgba(6,182,212,.07);color:var(--text)}
+.sb-item.on{border-left:2px solid var(--primary);padding-left:7px}
+.sb-item svg{flex-shrink:0;color:var(--text3)}
+.sb-item-t{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-foot{padding:8px;border-top:1px solid var(--border)}
+.sb-fitem{display:flex;align-items:center;gap:6px;padding:8px 9px;border-radius:var(--radius-sm);cursor:pointer;color:var(--text3);font-size:12px;transition:all .1s}
+.sb-fitem:active{background:var(--surface);color:var(--text)}
+
+/* ═══ VOICE ═══ */
+#voice{background:radial-gradient(ellipse at 50% 25%,#0a111a 0%,var(--bg) 60%);align-items:center;justify-content:space-between}
+.vhdr{width:100%;padding:10px 12px;padding-top:calc(10px + var(--safe-top));display:flex;align-items:center;justify-content:space-between;gap:8px}
+.vtitle{font-size:13px;font-weight:700;flex:1;text-align:center;letter-spacing:.2px}
+.vbody{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:16px;width:100%}
+.orb-wrap{position:relative;width:180px;height:180px;display:flex;align-items:center;justify-content:center}
+.orb-ring{position:absolute;border-radius:50%;border:1px solid rgba(6,182,212,.12);animation:orbR 3s ease-in-out infinite}
+.orb-ring:nth-child(1){width:100%;height:100%}
+.orb-ring:nth-child(2){width:80%;height:80%;animation-delay:.5s}
+.orb-ring:nth-child(3){width:62%;height:62%;animation-delay:1s}
+@keyframes orbR{0%,100%{transform:scale(1);opacity:.25}50%{transform:scale(1.05);opacity:.6}}
+.orb{width:130px;height:130px;border-radius:50%;background:radial-gradient(circle at 33% 33%,rgba(255,255,255,.2) 0%,#0284c7 30%,#0369a1 60%,#1e3a5f 100%);box-shadow:0 0 40px rgba(6,182,212,.35),inset 0 0 25px rgba(0,0,0,.2);position:relative;z-index:1;animation:orbFloat 4.5s ease-in-out infinite}
+.orb.listening{animation:orbListen .5s ease-in-out infinite alternate,orbFloat 4.5s ease-in-out infinite}
+.orb.speaking{animation:orbSpk .75s ease-in-out infinite,orbFloat 4.5s ease-in-out infinite}
+.orb.thinking{animation:orbThink 1.4s ease-in-out infinite,orbFloat 4.5s ease-in-out infinite}
+@keyframes orbFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes orbListen{0%{box-shadow:0 0 30px rgba(6,182,212,.35)}100%{box-shadow:0 0 60px rgba(6,182,212,.75);transform:scale(1.05)}}
+@keyframes orbSpk{0%,100%{transform:scale(1);box-shadow:0 0 40px rgba(6,182,212,.35)}50%{transform:scale(1.06);box-shadow:0 0 65px rgba(6,182,212,.65)}}
+@keyframes orbThink{0%,100%{filter:hue-rotate(0deg) brightness(1.1)}50%{filter:hue-rotate(20deg) brightness(1.4)}}
+.vstatus{text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px}
+.vstatus-lbl{font-size:10.5px;font-weight:600;color:var(--primary);text-transform:uppercase;letter-spacing:1.5px}
+.vwave{display:flex;align-items:center;gap:2.5px;height:18px}
+.wbar{width:2.5px;border-radius:2px;background:var(--primary);animation:wB .9s ease-in-out infinite}
+.wbar:nth-child(1){animation-delay:0s;height:5px}
+.wbar:nth-child(2){animation-delay:.1s;height:12px}
+.wbar:nth-child(3){animation-delay:.2s;height:18px}
+.wbar:nth-child(4){animation-delay:.3s;height:12px}
+.wbar:nth-child(5){animation-delay:.4s;height:7px}
+.wbar:nth-child(6){animation-delay:.5s;height:10px}
+.wbar:nth-child(7){animation-delay:.6s;height:16px}
+@keyframes wB{0%,100%{transform:scaleY(.35);opacity:.4}50%{transform:scaleY(1);opacity:1}}
+.vcaption{font-size:12.5px;color:var(--text2);text-align:center;max-width:76%;line-height:1.5;min-height:36px}
+.vctrl{width:100%;padding:14px 20px;padding-bottom:calc(14px + var(--safe-bottom));display:flex;flex-direction:column;gap:10px;align-items:center}
+.vmain-ctrl{display:flex;align-items:center;gap:14px}
+.vbtn{width:44px;height:44px;border-radius:50%;border:1px solid var(--border2);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;color:var(--text2)}
+.vbtn:active{transform:scale(.9)}
+.vbtn.end-btn{background:var(--danger);color:#fff;width:58px;height:58px;border:none;box-shadow:0 0 16px rgba(239,68,68,.3)}
+.vbtn.active{background:var(--primary-dim);border-color:var(--primary);color:var(--primary);box-shadow:0 0 10px rgba(6,182,212,.2)}
+
+/* ═══ ADMIN ═══ */
+#admin .body{padding:12px}
+.adm-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px}
+.adm-stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:11px}
+.adm-stat-v{font-size:20px;font-weight:800;color:var(--primary);font-variant-numeric:tabular-nums}
+.adm-stat-l{font-size:10px;color:var(--text3);margin-top:1px}
+.adm-sec{margin-bottom:16px}
+.adm-sec-t{font-size:9.5px;font-weight:700;color:var(--text3);margin-bottom:7px;text-transform:uppercase;letter-spacing:1px}
+.adm-row{display:flex;align-items:center;gap:9px;padding:10px 11px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:4px;cursor:pointer;transition:all .12s}
+.adm-row:active{background:var(--surface2);border-color:rgba(6,182,212,.25)}
+.adm-icon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.adm-rt{flex:1;min-width:0}
+.adm-rt-title{font-size:12.5px;font-weight:600;color:var(--text)}
+.adm-rt-sub{font-size:10px;color:var(--text3);margin-top:1px}
+.sub-panel{position:fixed;inset:0;background:var(--bg);z-index:200;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .26s cubic-bezier(.4,0,.2,1)}
+.sub-panel.on{transform:none}
+.sub-body{flex:1;overflow-y:auto;padding:12px}
+.fg{margin-bottom:12px}
+.fl{font-size:10px;font-weight:700;color:var(--text2);margin-bottom:4px;display:block;text-transform:uppercase;letter-spacing:.5px}
+.fi{width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:9px 11px;color:var(--text);font-size:13px;font-family:var(--font);outline:none;transition:border-color .15s}
+.fi:focus{border-color:rgba(6,182,212,.45)}
+textarea.fi{resize:vertical}
+select.fi{-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7'%3E%3Cpath d='M0 0l5 7 5-7z' fill='%2352525b'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+.trow{display:flex;align-items:center;justify-content:space-between;padding:9px 11px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:4px}
+.toggle-sw{position:relative;display:inline-block;width:38px;height:20px}
+.toggle-sw input{display:none}
+.tslider{position:absolute;cursor:pointer;inset:0;background:var(--border2);border-radius:10px;transition:.25s}
+.tslider::before{content:'';position:absolute;height:14px;width:14px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.25s}
+.toggle-sw input:checked + .tslider{background:var(--primary)}
+.toggle-sw input:checked + .tslider::before{transform:translateX(18px)}
+.save-btn{width:100%;padding:10px;background:var(--primary);border:none;border-radius:var(--radius);color:#000;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .15s;letter-spacing:.2px}
+.save-btn:active{transform:scale(.98);background:var(--primary2)}
+.mbadge{display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:20px;font-size:9px;font-weight:700;background:var(--primary-dim);color:var(--primary);border:1px solid rgba(6,182,212,.18)}
+
+/* ═══ AUTH ═══ */
+.auth-body{flex:1;overflow-y:auto;padding:20px 16px;display:flex;flex-direction:column;justify-content:center;align-items:center}
+.auth-logo{width:48px;height:48px;object-fit:contain;border-radius:12px;filter:drop-shadow(0 0 10px rgba(6,182,212,.35));margin:0 auto 10px}
+.auth-brand{font-size:9.5px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--text3);text-align:center;margin-bottom:4px}
+.auth-headline{font-size:18px;font-weight:800;color:var(--text);text-align:center;margin-bottom:3px}
+.auth-sub{font-size:12px;color:var(--text3);text-align:center;margin-bottom:20px}
+.auth-form{width:100%;max-width:340px}
+.auth-link{font-size:12px;color:var(--primary);cursor:pointer;text-align:center;margin-top:12px;display:block}
+.auth-link b{font-weight:700}
+.auth-link:active{opacity:.7}
+.pw-strength{height:2px;border-radius:1px;margin-top:4px;transition:all .3s;background:var(--border)}
+
+/* ═══ MODAL ═══ */
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:700;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-ov.hidden{display:none}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:20px;width:100%;max-width:300px;animation:mIn .22s cubic-bezier(.34,1.56,.64,1)}
+@keyframes mIn{0%{opacity:0;transform:scale(.88)}100%{opacity:1;transform:none}}
+.modal-title{font-size:15px;font-weight:800;color:var(--text);margin-bottom:4px}
+.modal-sub{font-size:11.5px;color:var(--text3);margin-bottom:14px;line-height:1.45}
+.modal-btns{display:flex;gap:7px;margin-top:14px}
+.mbtn{flex:1;padding:9px;border-radius:9px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:12.5px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .12s}
+.mbtn:active{opacity:.8}
+.mbtn.primary{background:var(--primary);color:#000;border-color:transparent}
+
+/* ═══ SEARCH MODAL ═══ */
+.srch-ov{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:400;display:flex;flex-direction:column;padding-top:var(--safe-top)}
+.srch-ov.hidden{display:none}
+.srch-box{background:var(--bg2);flex:1;display:flex;flex-direction:column;overflow:hidden}
+.srch-head{padding:10px;display:flex;gap:7px;align-items:center;border-bottom:1px solid var(--border)}
+.srch-inp{flex:1;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:8px 11px;color:var(--text);font-size:13px;font-family:var(--font);outline:none}
+.srch-results{flex:1;overflow-y:auto;padding:4px}
+.srch-item{padding:9px 11px;border-radius:var(--radius-sm);cursor:pointer;border-bottom:1px solid rgba(39,39,42,.5)}
+.srch-item:active{background:var(--surface)}
+.srch-item-t{font-size:12.5px;color:var(--text);font-weight:500}
+.srch-item-m{font-size:10.5px;color:var(--text3);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ═══ SCROLLBAR ═══ */
+::-webkit-scrollbar{width:2px;height:2px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+/* ═══ MODEL LIST ITEM ═══ */
+.model-item{display:flex;align-items:center;gap:9px;padding:10px 11px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:4px;cursor:pointer;transition:all .12s}
+.model-item:active{background:var(--surface2);border-color:rgba(6,182,212,.25)}
+.model-item.active-model{border-color:rgba(6,182,212,.35);background:rgba(6,182,212,.04)}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:340px){
+  .cards-grid{gap:5px}
+  .card{padding:8px;min-height:80px}
+  .hero-headline{font-size:17px}
+  .orb{width:110px;height:110px}
+  .orb-wrap{width:150px;height:150px}
+}
+@media(min-width:600px){
+  .bubble{max-width:65%}
+  .adm-grid{grid-template-columns:repeat(4,1fr)}
+}
+@media(orientation:landscape) and (max-height:480px){
+  .orb-wrap{width:110px;height:110px}
+  .orb{width:84px;height:84px}
+  .vbody{gap:8px;padding:6px}
+  .home-hero{padding:4px 0 8px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ══ SPLASH ══ -->
+<div class="screen active" id="splash">
+  <div class="spl-glow"></div>
+  <div class="spl-inner">
+    <img class="spl-logo" src="https://i.ibb.co/fVytxZx2/file-000000000588720986999f59e04491dd.png" alt="NCI">
+    <div class="spl-name">NIMAH CORE INTELLIGENCE</div>
+    <div class="spl-sub">Premium AI Platform</div>
+    <div class="spl-bar-wrap"><div class="spl-bar"><div class="spl-fill"></div></div></div>
+  </div>
+</div>
+
+<!-- ══ ADMIN UNLOCK MODAL ══ -->
+<div class="modal-ov hidden" id="adminModal">
+  <div class="modal">
+    <div class="modal-title">Admin Access</div>
+    <div class="modal-sub">Enter the admin password to continue.</div>
+    <div class="fg"><input class="fi" type="password" id="adminPwInput" placeholder="Password" autocomplete="off" onkeydown="if(event.key==='Enter')verifyAdmin()"></div>
+    <div id="adminPwErr" style="color:var(--danger);font-size:11.5px;display:none;margin-top:-6px;margin-bottom:6px">Incorrect password.</div>
+    <div class="modal-btns">
+      <button class="mbtn" onclick="closeAdminModal()">Cancel</button>
+      <button class="mbtn primary" onclick="verifyAdmin()">Unlock</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SEARCH MODAL ══ -->
+<div class="srch-ov hidden" id="srchModal">
+  <div class="srch-box">
+    <div class="srch-head">
+      <input class="srch-inp" id="srchInp" placeholder="Search conversations…" oninput="doSearch(this.value)">
+      <button class="hbtn" onclick="closeSrch()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="srch-results" id="srchRes"></div>
+  </div>
+</div>
+
+<!-- ══ SIDEBAR ══ -->
+<div class="sb-ov" id="sbOv" onclick="closeSB()"></div>
+<div class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <img class="sb-logo" src="https://i.ibb.co/fVytxZx2/file-000000000588720986999f59e04491dd.png" alt="NCI">
+    <div class="sb-title">NIMAH CORE<br>INTELLIGENCE</div>
+    <button class="sb-close" onclick="closeSB()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  </div>
+  <button class="sb-new" onclick="newChat();closeSB()">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+    New Conversation
+  </button>
+  <div class="sb-sec">Recent</div>
+  <div class="sb-list" id="sbList"></div>
+  <div class="sb-foot">
+    <div class="sb-fitem" onclick="showScreen('login');closeSB()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      Account
+    </div>
+    <div class="sb-fitem" onclick="closeSB();showToast('NIMAH CORE INTELLIGENCE v2.0 — Nimah Software Developer','ok')">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+      About
+    </div>
+  </div>
+</div>
+
+<!-- ══ LOGIN ══ -->
+<div class="screen" id="login">
+  <div class="header">
+    <button class="hbtn" onclick="showScreen('home')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
+    <div class="htitle">Sign In</div>
+  </div>
+  <div class="auth-body">
+    <img class="auth-logo" src="https://i.ibb.co/fVytxZx2/file-000000000588720986999f59e04491dd.png" alt="NCI">
+    <div class="auth-brand">NIMAH CORE INTELLIGENCE</div>
+    <div class="auth-headline">Welcome Back</div>
+    <div class="auth-sub">Sign in to continue</div>
+    <div class="auth-form">
+      <div class="fg"><label class="fl">Email</label><input class="fi" id="loginEmail" type="email" placeholder="you@example.com" autocomplete="email"></div>
+      <div class="fg"><label class="fl">Password</label><input class="fi" id="loginPw" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <label style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--text2);cursor:pointer">
+          <label class="toggle-sw" style="width:32px;height:18px"><input type="checkbox" id="rememberMe"><span class="tslider"></span></label>
+          Remember me
+        </label>
+        <span class="auth-link" style="margin:0;font-size:11.5px" onclick="showScreen('forgot')">Forgot password?</span>
+      </div>
+      <button class="save-btn" onclick="doLogin()">Sign In</button>
+      <div class="auth-link" onclick="showScreen('register')">Don't have an account? <b>Create one</b></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ REGISTER ══ -->
+<div class="screen" id="register">
+  <div class="header">
+    <button class="hbtn" onclick="showScreen('login')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
+    <div class="htitle">Create Account</div>
+  </div>
+  <div class="auth-body">
+    <img class="auth-logo" src="https://i.ibb.co/fVytxZx2/file-000000000588720986999f59e04491dd.png" alt="NCI">
+    <div class="auth-brand">NIMAH CORE INTELLIGENCE</div>
+    <div class="auth-headline">Create Account</div>
+    <div class="auth-sub">Join NIMAH CORE INTELLIGENCE</div>
+    <div class="auth-form">
+      <div class="fg"><label class="fl">Full Name</label><input class="fi" id="regName" type="text" placeholder="Your full name"></div>
+      <div class="fg"><label class="fl">Username</label><input class="fi" id="regUser" type="text" placeholder="username" autocomplete="username"></div>
+      <div class="fg"><label class="fl">Email</label><input class="fi" id="regEmail" type="email" placeholder="you@example.com"></div>
+      <div class="fg"><label class="fl">Password</label><input class="fi" id="regPw" type="password" placeholder="Min 6 characters" oninput="checkPwStrength(this.value)"><div class="pw-strength" id="pwStr"></div></div>
+      <div class="fg"><label class="fl">Confirm Password</label><input class="fi" id="regPw2" type="password" placeholder="••••••••"></div>
+      <button class="save-btn" onclick="doRegister()">Create Account</button>
+      <div class="auth-link" onclick="showScreen('login')">Already have an account? <b>Sign In</b></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FORGOT ══ -->
+<div class="screen" id="forgot">
+  <div class="header">
+    <button class="hbtn" onclick="showScreen('login')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
+    <div class="htitle">Reset Password</div>
+  </div>
+  <div class="auth-body">
+    <img class="auth-logo" src="https://i.ibb.co/fVytxZx2/file-000000000588720986999f59e04491dd.png" alt="NCI">
+    <div class="auth-headline">Forgot Password?</div>
+    <div class="auth-sub">Enter your email to receive a reset link.</div>
+    <div class="auth-form">
+      <div class="fg"><label class="fl">Email</label><input class="fi" id="forgotEmail" type="email" placeholder="you@example.com"></div>
+      <button class="save-btn" onclick="doForgot()">Send Reset Link</button>
+      <div class="auth-link" onclick="showScreen('login')">Back to Sign In</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ HOME ══ -->
+<div class="screen" id="home">
+  <div class="header">
+    <button class="hbtn" onclick="openSB()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg></button>
+    <img class="hlogo" src="https://i.ibb.co/fVytxZx2/file-000000000588720986999f59e04491dd.png" alt="NCI">
+    <div class="htitle" id="homeTitle" onclick="handleTitleTap()">NIMAH CORE <span>INTELLIGENCE</span></div>
+    <div class="status-dot"></div>
+    <button class="hbtn" onclick="newChat();showScreen('chat')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+  </div>
+  <div class="body" id="homeBody">
+    <div class="home-hero">
+      <div class="hero-badge"><span style="width:5px;height:5px;border-radius:50%;background:var(--success);display:inline-block"></span>Online</div>
+      <img class="hero-logo" src="https://i.ibb.co/fVytxZx2/file-000000000588720986999f59e04491dd.png" alt="NCI">
+      <div class="hero-eyebrow">NIMAH CORE INTELLIGENCE</div>
+      <div class="hero-headline">Create. Discover. Build.</div>
+      <div class="hero-tagline">
+        <span>Ask anything</span>
+        <span>Solve anything</span>
+        <span>Build anything</span>
+      </div>
+    </div>
+    <div class="cards-grid">
+      <div class="card" onclick="quickChat('Plan a project step-by-step for me')">
+        <div class="card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></svg></div>
+        <div class="card-title">Plan Projects</div>
+        <div class="card-desc">Organize your big ideas.</div>
+      </div>
+      <div class="card" onclick="quickChat('Help me debug and solve this code issue')">
+        <div class="card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+        <div class="card-title">Solve Code</div>
+        <div class="card-desc">Debug errors fast.</div>
+      </div>
+      <div class="card" onclick="quickChat('Help me write high-quality content')">
+        <div class="card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+        <div class="card-title">Write Content</div>
+        <div class="card-desc">Draft with AI precision.</div>
+      </div>
+      <div class="card" onclick="quickChat('Explain this concept clearly to me')">
+        <div class="card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg></div>
+        <div class="card-title">Learn Anything</div>
+        <div class="card-desc">Get instant clarity.</div>
+      </div>
+    </div>
+  </div>
+  <div class="input-wrap" id="homeIW">
+    <div class="input-float">
+      <div class="input-toolbar">
+        <div class="itbtn" id="modelBtn" onclick="openAdminPanel('models')">
+          <img src="https://i.ibb.co/fVytxZx2/file-000000000588720986999f59e04491dd.png" width="11" height="11" style="border-radius:3px;object-fit:contain">
+          <span id="modelLabel">Nimah Core V01</span>
+          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+        <div class="itbtn" onclick="triggerFile('image/*,.pdf,.doc,.docx')">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+          Attach
+        </div>
+      </div>
+      <div id="homeAtt" class="attach-strip" style="display:none"></div>
+      <div class="input-row">
+        <textarea class="input-txt" id="homeInp" placeholder="Ask NIMAH CORE INTELLIGENCE…" rows="1" oninput="autoH(this)" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendHome()}"></textarea>
+        <div class="input-actions">
+          <button class="iabtn" onclick="showScreen('voice')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg></button>
+          <button class="send-btn" id="homeSend" onclick="sendHome()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m22 2-7 20-4-9-9-4 20-7z"/><path d="M22 2 11 13"/></svg></button>
+        </div>
+      </div>
+    </div>
+    <div class="disclaimer">NIMAH CORE INTELLIGENCE can make mistakes. Verify important responses.</div>
+  </div>
+</div>
+
+<!-- ══ CHAT ══ -->
+<div class="screen" id="chat">
+  <div class="header">
+    <button class="hbtn" onclick="showScreen('home')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
+    <img class="hlogo" src="https://i.ibb.co/fVytxZx2/file-000000000588720986999f59e04491dd.png" alt="NCI">
+    <div class="htitle" id="chatTitle">NIMAH CORE INTELLIGENCE</div>
+    <button class="hbtn hbtn-text" id="langBtn" onclick="toggleLang()">EN</button>
+    <button class="hbtn" onclick="openSrch()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button>
+    <button class="hbtn" onclick="clearChat()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="m19 6-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4h6v2"/></svg></button>
+  </div>
+  <div class="msgs" id="msgs"></div>
+  <div class="input-wrap" id="chatIW">
+    <div class="input-float">
+      <div class="input-toolbar">
+        <div class="itbtn" onclick="triggerFile('image/*,.pdf,.doc,.docx,.xlsx,.pptx')"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>Attach</div>
+        <div class="itbtn" onclick="showScreen('voice')"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>Voice</div>
+        <div class="itbtn" onclick="exportChat()"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export</div>
+      </div>
+      <div id="chatAtt" class="attach-strip" style="display:none"></div>
+      <div class="input-row">
+        <textarea class="input-txt" id="chatInp" placeholder="Message NIMAH CORE INTELLIGENCE…" rows="1" oninput="autoH(this)" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}"></textarea>
+        <div class="input-actions">
+          <button class="iabtn" onclick="showScreen('voice')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg></button>
+          <button class="send-btn" id="chatSend" onclick="sendChat()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m22 2-7 20-4-9-9-4 20-7z"/><path d="M22 2 11 13"/></svg></button>
+        </div>
+      </div>
+    </div>
+    <div class="disclaimer">NIMAH CORE INTELLIGENCE can make mistakes. Verify important responses.</div>
+  </div>
+</div>
+
+<!-- ══ VOICE ══ -->
+<div class="screen" id="voice">
+  <div class="vhdr">
+    <button class="hbtn" onclick="endVoice()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
+    <div class="vtitle">Voice Mode</div>
+    <button class="hbtn hbtn-text" id="vLangBtn" onclick="toggleLang()">EN</button>
+    <button class="hbtn" onclick="showToast('Voice settings in Admin panel','')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg></button>
+  </div>
+  <div class="vbody">
+    <div class="orb-wrap">
+      <div class="orb-ring"></div><div class="orb-ring"></div><div class="orb-ring"></div>
+      <div class="orb" id="vorb"></div>
+    </div>
+    <div class="vstatus">
+      <div class="vstatus-lbl" id="vstLbl">Tap mic to start</div>
+      <div class="vwave" id="vwave" style="opacity:0">
+        <div class="wbar"></div><div class="wbar"></div><div class="wbar"></div>
+        <div class="wbar"></div><div class="wbar"></div><div class="wbar"></div>
+        <div class="wbar"></div>
+      </div>
+    </div>
+    <div class="vcaption" id="vcap">Press the microphone to begin a conversation</div>
+  </div>
+  <div class="vctrl">
+    <div class="vmain-ctrl">
+      <button class="vbtn" id="vSpk" onclick="toggleSpk()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>
+      <button class="vbtn end-btn" id="vMainBtn" onclick="toggleVoice()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg></button>
+      <button class="vbtn" onclick="showScreen('chat')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="m8 21 4-4 4 4"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADMIN ══ -->
+<div class="screen" id="admin">
+  <div class="header">
+    <button class="hbtn" onclick="showScreen('home')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
+    <img class="hlogo" src="https://i.ibb.co/fVytxZx2/file-000000000588720986999f59e04491dd.png" alt="NCI">
+    <div class="htitle">Admin Dashboard</div>
+  </div>
+  <div class="body" id="adminBody">
+    <div class="adm-grid">
+      <div class="adm-stat"><div class="adm-stat-v" id="stChats">0</div><div class="adm-stat-l">Total Chats</div></div>
+      <div class="adm-stat"><div class="adm-stat-v" id="stMsgs">0</div><div class="adm-stat-l">Messages</div></div>
+      <div class="adm-stat"><div class="adm-stat-v" style="color:var(--success)">ON</div><div class="adm-stat-l">System Status</div></div>
+      <div class="adm-stat"><div class="adm-stat-v" id="stModel" style="font-size:12px">V01</div><div class="adm-stat-l">Active Model</div></div>
+    </div>
+
+    <div class="adm-sec">
+      <div class="adm-sec-t">Core Settings</div>
+      <div class="adm-row" onclick="openSub('api')"><div class="adm-icon" style="background:rgba(6,182,212,.1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="m16 18 2 2 4-4"/><path d="m16 6 2 2 4-4"/><path d="M1 6h14M1 12h8M1 18h14"/></svg></div><div class="adm-rt"><div class="adm-rt-title">API & Keys</div><div class="adm-rt-sub">OpenRouter API key</div></div><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+      <div class="adm-row" onclick="openSub('models')"><div class="adm-icon" style="background:rgba(139,92,246,.1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div><div class="adm-rt"><div class="adm-rt-title">AI Model Manager</div><div class="adm-rt-sub">Configure Nimah models</div></div><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+      <div class="adm-row" onclick="openSub('prompts')"><div class="adm-icon" style="background:rgba(6,182,212,.08)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="adm-rt"><div class="adm-rt-title">Prompt Manager</div><div class="adm-rt-sub">System prompts & templates</div></div><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+      <div class="adm-row" onclick="openSub('voice')"><div class="adm-icon" style="background:rgba(34,197,94,.1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg></div><div class="adm-rt"><div class="adm-rt-title">Voice Settings</div><div class="adm-rt-sub">TTS, STT, language</div></div><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+    </div>
+
+    <div class="adm-sec">
+      <div class="adm-sec-t">Appearance</div>
+      <div class="adm-row" onclick="openSub('branding')"><div class="adm-icon" style="background:rgba(245,158,11,.1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg></div><div class="adm-rt"><div class="adm-rt-title">Branding & Theme</div><div class="adm-rt-sub">Colors, accent, splash</div></div><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+      <div class="adm-row" onclick="openSub('homepage')"><div class="adm-icon" style="background:rgba(59,130,246,.1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="adm-rt"><div class="adm-rt-title">Homepage Builder</div><div class="adm-rt-sub">Welcome text, cards</div></div><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+    </div>
+
+    <div class="adm-sec">
+      <div class="adm-sec-t">Security & System</div>
+      <div class="adm-row" onclick="openSub('security')"><div class="adm-icon" style="background:rgba(239,68,68,.1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="adm-rt"><div class="adm-rt-title">Security Center</div><div class="adm-rt-sub">Logs, audit, access</div></div><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+      <div class="adm-row" onclick="openSub('analytics')"><div class="adm-icon" style="background:rgba(34,197,94,.1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></div><div class="adm-rt"><div class="adm-rt-title">Analytics</div><div class="adm-rt-sub">Usage, statistics</div></div><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+      <div class="adm-row" onclick="openSub('maintenance')"><div class="adm-icon" style="background:rgba(245,158,11,.1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div><div class="adm-rt"><div class="adm-rt-title">Maintenance</div><div class="adm-rt-sub">System settings, backup</div></div><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+      <div class="adm-row" onclick="openSub('notifications')"><div class="adm-icon" style="background:rgba(139,92,246,.1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div><div class="adm-rt"><div class="adm-rt-title">Notifications</div><div class="adm-rt-sub">Push, email, SMS</div></div><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+    </div>
+    <button class="save-btn" style="background:var(--danger)" onclick="if(confirm('Sign out of admin?')){showScreen('home');showToast('Admin session ended','ok')}">Sign Out Admin</button>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- ══ ADMIN SUB PANEL ══ -->
+<div class="sub-panel" id="subPanel">
+  <div class="header">
+    <button class="hbtn" onclick="closeSub()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
+    <div class="htitle" id="subTitle">Settings</div>
+    <button class="hbtn" onclick="saveSub()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></button>
+  </div>
+  <div class="sub-body" id="subBody"></div>
+</div>
+
+<!-- ══ FILE INPUT & TOAST ══ -->
+<input type="file" id="fileInp" multiple>
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+const ST = {
+  chats: JSON.parse(localStorage.getItem('nci_chats')||'{}'),
+  cfg: JSON.parse(localStorage.getItem('nci_cfg')||'{}'),
+  cid: null,
+  lang: 'en',
+  tts: true,
+  spk: true,
+  busy: false,
+  atHome: [],
+  atChat: [],
+  titleTaps: 0,
+  titleTimer: null,
+  user: JSON.parse(localStorage.getItem('nci_session')||'null'),
+};
+ST.apiKey = ST.cfg.apiKey||'';
+ST.model = ST.cfg.model||'openrouter/auto';
+ST.modelLabel = ST.cfg.modelLabel||'Nimah Core V01';
+ST.lang = ST.cfg.lang||'en';
+ST.tts = ST.cfg.tts!==false;
+ST.sysPr = ST.cfg.sysPr||`You are NIMAH CORE INTELLIGENCE, a premium AI assistant created and developed by Nimah Software Developer. You are NOT Google Gemini, ChatGPT, Claude, Bard, Copilot, or any other company's AI. Never mention being made by Google, OpenAI, Anthropic, Microsoft, or any other company. If asked who created you, always respond: "I was created by Nimah Software Developer." You are helpful, intelligent, professional, and accurate. Always respond in the same language the user writes in.`;
+
+let MODELS = JSON.parse(localStorage.getItem('nci_models')||'null') || [
+  {id:'openrouter/auto',label:'Nimah Core V01',enabled:true},
+  {id:'anthropic/claude-3-haiku',label:'Nimah Core V02',enabled:true},
+  {id:'openai/gpt-4o-mini',label:'Nimah Core Pro',enabled:true},
+  {id:'openai/gpt-4o',label:'Nimah Vision',enabled:true},
+  {id:'google/gemini-flash-1.5',label:'Nimah Voice',enabled:true},
+  {id:'anthropic/claude-3.5-sonnet',label:'Nimah Coding',enabled:true},
+  {id:'perplexity/llama-3.1-sonar-small-128k-online',label:'Nimah Research',enabled:true},
+  {id:'anthropic/claude-3-opus',label:'Nimah Ultra',enabled:true},
+];
+function saveModels(){localStorage.setItem('nci_models',JSON.stringify(MODELS));}
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+window.addEventListener('load',()=>{
+  applyModelLabel();
+  updateStats();
+  if(ST.cfg.primaryColor) document.documentElement.style.setProperty('--primary',ST.cfg.primaryColor);
+  if(ST.cfg.heroHeadline){const h=document.querySelector('.hero-headline');if(h)h.textContent=ST.cfg.heroHeadline;}
+  setTimeout(()=>{showScreen('home');renderSBList();},3200);
+});
+document.addEventListener('touchstart',e=>{if(e.touches.length>1)e.preventDefault();},{passive:false});
+let _lt=0;
+document.addEventListener('touchend',e=>{const n=Date.now();if(n-_lt<280)e.preventDefault();_lt=n;},{passive:false});
+
+// ═══════════════════════════════════════
+// SCREENS
+// ═══════════════════════════════════════
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id);
+  if(el)el.classList.add('active');
+  if(id==='chat'){renderMsgs();setTimeout(scrollBot,80);}
+  if(id==='admin')updateStats();
+  setTimeout(()=>{
+    const wrap=document.querySelector('.screen.active .input-wrap');
+    if(wrap) document.getElementById('toast').style.setProperty('--ibar-h',wrap.offsetHeight+'px');
+  },50);
+}
+
+// ═══════════════════════════════════════
+// SIDEBAR
+// ═══════════════════════════════════════
+function openSB(){document.getElementById('sidebar').classList.add('on');document.getElementById('sbOv').classList.add('on');}
+function closeSB(){document.getElementById('sidebar').classList.remove('on');document.getElementById('sbOv').classList.remove('on');}
+
+// ═══════════════════════════════════════
+// ADMIN LOCK (triple tap title)
+// ═══════════════════════════════════════
+function handleTitleTap(){
+  ST.titleTaps++;
+  clearTimeout(ST.titleTimer);
+  if(ST.titleTaps>=3){
+    ST.titleTaps=0;
+    const m=document.getElementById('adminModal');
+    m.classList.remove('hidden');
+    document.getElementById('adminPwInput').value='';
+    document.getElementById('adminPwErr').style.display='none';
+    setTimeout(()=>document.getElementById('adminPwInput').focus(),150);
+    return;
+  }
+  ST.titleTimer=setTimeout(()=>ST.titleTaps=0,3000);
+}
+function closeAdminModal(){document.getElementById('adminModal').classList.add('hidden');}
+function verifyAdmin(){
+  const pw=document.getElementById('adminPwInput').value;
+  if(pw==='Nimah0717'){closeAdminModal();showScreen('admin');}
+  else{document.getElementById('adminPwErr').style.display='block';document.getElementById('adminPwInput').value='';}
+}
+
+// ═══════════════════════════════════════
+// CHAT MANAGEMENT
+// ═══════════════════════════════════════
+function uid(){return 'c'+Date.now()+Math.random().toString(36).slice(2,5);}
+function saveChats(){localStorage.setItem('nci_chats',JSON.stringify(ST.chats));}
+function saveCfg(){localStorage.setItem('nci_cfg',JSON.stringify(ST.cfg));}
+
+function newChat(init){
+  const id=uid();
+  ST.chats[id]={id,title:'New Chat',msgs:[],created:Date.now(),updated:Date.now()};
+  ST.cid=id;
+  saveChats();renderSBList();
+  if(init){addMsg('user',init);showScreen('chat');setTimeout(()=>callAIAndRender(init),60);}
+}
+function loadChat(id){ST.cid=id;showScreen('chat');renderSBList();}
+function clearChat(){if(ST.cid&&ST.chats[ST.cid]){ST.chats[ST.cid].msgs=[];saveChats();renderMsgs();showToast('Chat cleared','ok');}}
+function renderSBList(){
+  const el=document.getElementById('sbList');
+  const ids=Object.keys(ST.chats).sort((a,b)=>(ST.chats[b].updated||0)-(ST.chats[a].updated||0));
+  if(!ids.length){el.innerHTML='<div style="padding:12px 10px;color:var(--text3);font-size:11.5px;text-align:center">No chats yet</div>';return;}
+  el.innerHTML=ids.slice(0,30).map(id=>{
+    const c=ST.chats[id];
+    return `<div class="sb-item${id===ST.cid?' on':''}" onclick="loadChat('${id}');closeSB()">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span class="sb-item-t">${xss(c.title||'New Chat')}</span>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════
+// MESSAGES
+// ═══════════════════════════════════════
+function addMsg(role,content){
+  if(!ST.cid)return;
+  const m={role,content,ts:Date.now()};
+  ST.chats[ST.cid].msgs.push(m);
+  ST.chats[ST.cid].updated=Date.now();
+  if(role==='user'&&ST.chats[ST.cid].msgs.length===1){
+    ST.chats[ST.cid].title=content.slice(0,40)+(content.length>40?'…':'');
+    const t=document.getElementById('chatTitle');
+    if(t)t.textContent=ST.chats[ST.cid].title;
+  }
+  saveChats();
+}
+function renderMsgs(){
+  const el=document.getElementById('msgs');
+  if(!el)return;
+  if(!ST.cid||!ST.chats[ST.cid]){el.innerHTML='';return;}
+  const msgs=ST.chats[ST.cid].msgs;
+  if(!msgs.length){el.innerHTML='<div style="flex:1;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:12px;text-align:center;padding:24px">Start a conversation</div>';return;}
+  el.innerHTML=msgs.map((m,i)=>renderMsg(m,i)).join('');
+  scrollBot();
+}
+function renderMsg(m,i){
+  const time=new Date(m.ts||Date.now()).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  if(m.role==='user')return `<div class="mg user"><div class="bubble user">${xss(m.content)}<div class="ts">${time}</div></div></div>`;
+  const html=md(m.content||'');
+  return `<div class="mg ai">
+    <div class="mg-meta"><img class="mg-av" src="https://i.ibb.co/fVytxZx2/file-000000000588720986999f59e04491dd.png" alt="NCI"><span class="mg-name">NIMAH CORE INTELLIGENCE</span></div>
+    <div class="bubble ai">${html}<div class="ts">${time}</div></div>
+    <div class="msg-acts">
+      <button class="mabtn" onclick="copyMsg(${i})"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+      <button class="mabtn" onclick="speakMsg(${i})"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>Speak</button>
+      <button class="mabtn" onclick="retryMsg(${i})"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M2.5 22v-6h6"/><path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2"/></svg>Retry</button>
+      <button class="mabtn" onclick="delMsg(${i})"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="m19 6-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Delete</button>
+    </div>
+  </div>`;
+}
+function scrollBot(){const el=document.getElementById('msgs');if(el)el.scrollTop=el.scrollHeight;}
+function showTyping(){
+  const el=document.getElementById('msgs');if(!el)return;
+  const d=document.createElement('div');d.id='typ';d.className='mg ai';
+  d.innerHTML=`<div class="mg-meta"><img class="mg-av" src="https://i.ibb.co/fVytxZx2/file-000000000588720986999f59e04491dd.png" alt="NCI"></div><div class="typing"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div>`;
+  el.appendChild(d);scrollBot();
+}
+function hideTyping(){const e=document.getElementById('typ');if(e)e.remove();}
+
+// ═══════════════════════════════════════
+// SEND
+// ═══════════════════════════════════════
+function quickChat(p){newChat();document.getElementById('chatInp').value=p;setTimeout(sendChat,150);}
+function sendHome(){
+  const inp=document.getElementById('homeInp');
+  const txt=inp.value.trim();
+  if(!txt&&!ST.atHome.length)return;
+  inp.value='';autoH(inp);
+  let full=txt;
+  if(ST.atHome.length)full+='\n[Attached: '+ST.atHome.map(a=>a.name).join(', ')+']';
+  ST.atHome=[];updAtt('home');
+  newChat(full);
+}
+async function sendChat(){
+  const inp=document.getElementById('chatInp');
+  const txt=inp.value.trim();
+  if((!txt&&!ST.atChat.length)||ST.busy)return;
+  if(!ST.cid){newChat();return;}
+  inp.value='';autoH(inp);
+  ST.busy=true;
+  document.getElementById('chatSend').disabled=true;
+  let full=txt;
+  if(ST.atChat.length)full+='\n[Attached: '+ST.atChat.map(a=>a.name).join(', ')+']';
+  ST.atChat=[];updAtt('chat');
+  addMsg('user',full);renderMsgs();showTyping();
+  try{
+    const reply=await callAI(full);
+    hideTyping();addMsg('assistant',reply);renderMsgs();
+    if(ST.tts&&ST.cfg.autoSpeak)speak(reply);
+  }catch(e){
+    hideTyping();addMsg('assistant','⚠️ '+(e.message||'Error. Check API key in Admin.'));renderMsgs();
+    showToast(e.message||'API error','err');
+  }
+  ST.busy=false;
+  document.getElementById('chatSend').disabled=false;
+  updateStats();
+}
+async function callAIAndRender(userMsg){
+  if(!ST.cid)return;
+  showTyping();
+  try{
+    const reply=await callAI(userMsg);
+    hideTyping();addMsg('assistant',reply);renderMsgs();
+  }catch(e){
+    hideTyping();addMsg('assistant','⚠️ '+(e.message||'Error. Check API key.'));renderMsgs();
+    showToast(e.message||'API error','err');
+  }
+  updateStats();
+}
+async function callAI(userMsg){
+  if(!ST.apiKey)throw new Error('API key not set. Triple-tap title → Admin → API & Keys');
+  const chat=ST.chats[ST.cid];
+  const history=(chat.msgs||[]).slice(-16).map(m=>({role:m.role==='assistant'?'assistant':'user',content:m.content}));
+  const res=await fetch('https://openrouter.ai/api/v1/chat/completions',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+ST.apiKey,'HTTP-Referer':location.origin,'X-Title':'NIMAH CORE INTELLIGENCE'},
+    body:JSON.stringify({model:ST.model,messages:[{role:'system',content:ST.sysPr},...history],max_tokens:2048})
+  });
+  if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||`API error ${res.status}`);}
+  const data=await res.json();
+  return data.choices?.[0]?.message?.content||'No response.';
+}
+
+// ═══════════════════════════════════════
+// MSG ACTIONS
+// ═══════════════════════════════════════
+function copyMsg(i){const m=ST.chats[ST.cid]?.msgs;if(!m||!m[i])return;navigator.clipboard.writeText(m[i].content).then(()=>showToast('Copied','ok')).catch(()=>showToast('Copy failed','err'));}
+function speakMsg(i){const m=ST.chats[ST.cid]?.msgs;if(!m||!m[i])return;speak(m[i].content);}
+function retryMsg(i){
+  const m=ST.chats[ST.cid]?.msgs;if(!m||i<1)return;
+  let ui=i-1;while(ui>=0&&m[ui].role!=='user')ui--;
+  if(ui<0)return;
+  const ut=m[ui].content;
+  ST.chats[ST.cid].msgs=m.slice(0,ui);saveChats();
+  document.getElementById('chatInp').value=ut;renderMsgs();setTimeout(sendChat,80);
+}
+function delMsg(i){const m=ST.chats[ST.cid]?.msgs;if(!m)return;m.splice(i,1);saveChats();renderMsgs();}
+function exportChat(){
+  if(!ST.cid||!ST.chats[ST.cid])return;
+  const c=ST.chats[ST.cid];
+  const txt=c.msgs.map(m=>`${m.role.toUpperCase()} [${new Date(m.ts).toLocaleString()}]:\n${m.content}`).join('\n\n---\n\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain'}));a.download=(c.title||'chat')+'.txt';a.click();
+  showToast('Exported','ok');
+}
+
+// ═══════════════════════════════════════
+// VOICE — full continuous conversation
+// ═══════════════════════════════════════
+let _vRec=null,_vState='idle',_vSpk=true;
+function toggleVoice(){_vState==='idle'?startVoice():endVoice();}
+
+function startVoice(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){showToast('Speech recognition not supported on this browser','err');return;}
+  if(!ST.apiKey){showToast('Set API key first (triple-tap title → Admin)','warn');return;}
+  setVState('listening');
+  _startSR();
+}
+
+function _startSR(){
+  if(_vState==='idle')return;
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  const r=new SR();
+  r.continuous=false;
+  r.interimResults=true;
+  r.lang=ST.lang==='si'?'si-LK':'en-US';
+  _vRec=r;
+  let finalText='';
+  r.onresult=e=>{
+    let interim='';finalText='';
+    for(const res of e.results){if(res.isFinal)finalText+=res[0].transcript;else interim+=res[0].transcript;}
+    document.getElementById('vcap').textContent=finalText||interim||'…';
+  };
+  r.onend=()=>{
+    if(finalText.trim()&&(_vState==='listening'||_vState==='idle')){
+      handleVInput(finalText.trim());
+    }else if(_vState==='listening'){
+      setTimeout(_startSR,300);
+    }
+  };
+  r.onerror=e=>{
+    if(e.error==='no-speech'&&_vState==='listening'){setTimeout(_startSR,400);return;}
+    if(e.error!=='aborted'){showToast('Mic error: '+e.error,'err');setVState('idle');}
+  };
+  try{r.start();}catch(e){setTimeout(_startSR,500);}
+}
+
+async function handleVInput(txt){
+  if(!txt||_vState==='thinking'||_vState==='speaking')return;
+  setVState('thinking');
+  document.getElementById('vcap').textContent=txt;
+  if(!ST.cid)newChat();
+  addMsg('user',txt);
+  try{
+    const reply=await callAI(txt);
+    addMsg('assistant',reply);
+    document.getElementById('vcap').textContent=reply.slice(0,120)+(reply.length>120?'…':'');
+    if(_vSpk&&window.speechSynthesis){
+      setVState('speaking');
+      _speakV(reply,()=>{if(_vState!=='idle'){setVState('listening');_startSR();}});
+    }else{
+      setVState('idle');
+      setTimeout(()=>{if(_vState==='idle'){setVState('listening');startVoice();}},800);
+    }
+  }catch(e){
+    setVState('idle');showToast('Error: '+(e.message||'API failed'),'err');
+    setTimeout(()=>{if(_vState==='idle'){setVState('listening');startVoice();}},1000);
+  }
+}
+
+function _speakV(txt,cb){
+  if(!window.speechSynthesis){cb&&cb();return;}
+  window.speechSynthesis.cancel();
+  const clean=txt.replace(/[#*`_]/g,'').slice(0,450);
+  const u=new SpeechSynthesisUtterance(clean);
+  u.lang=ST.lang==='si'?'si-LK':'en-US';u.rate=1.05;u.pitch=1;
+  u.onend=cb;u.onerror=cb;
+  window.speechSynthesis.speak(u);
+}
+
+function setVState(s){
+  _vState=s;
+  const orb=document.getElementById('vorb');
+  const lbl=document.getElementById('vstLbl');
+  const wave=document.getElementById('vwave');
+  const btn=document.getElementById('vMainBtn');
+  if(!orb)return;
+  orb.className='orb';
+  wave.style.opacity='0';
+  const MIC=`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>`;
+  if(s==='listening'){orb.classList.add('listening');lbl.textContent='Listening…';wave.style.opacity='1';btn.style.background='var(--success)';btn.innerHTML=MIC;}
+  else if(s==='thinking'){orb.classList.add('thinking');lbl.textContent='Thinking…';btn.style.background='var(--warning)';btn.innerHTML=`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>`;}
+  else if(s==='speaking'){orb.classList.add('speaking');lbl.textContent='Speaking…';wave.style.opacity='1';btn.style.background='var(--primary2)';btn.innerHTML=`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`;}
+  else{lbl.textContent='Tap mic to start';document.getElementById('vcap').textContent='Press the microphone to begin a conversation';btn.style.background='var(--danger)';btn.innerHTML=MIC;}
+}
+
+function endVoice(){
+  if(_vRec){try{_vRec.abort();}catch(e){}  _vRec=null;}
+  if(window.speechSynthesis)window.speechSynthesis.cancel();
+  setVState('idle');showScreen('chat');
+}
+function toggleSpk(){
+  _vSpk=!_vSpk;
+  document.getElementById('vSpk').classList.toggle('active',_vSpk);
+  showToast('Speaker '+(_vSpk?'on':'off'),'');
+}
+function speak(txt){
+  if(!ST.tts||!window.speechSynthesis)return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(txt.replace(/[#*`_]/g,'').slice(0,300));
+  u.lang=ST.lang==='si'?'si-LK':'en-US';
+  window.speechSynthesis.speak(u);
+}
+function toggleLang(){
+  ST.lang=ST.lang==='en'?'si':'en';
+  const lbl=ST.lang==='en'?'EN':'සිං';
+  ['langBtn','vLangBtn'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=lbl;});
+  ST.cfg.lang=ST.lang;saveCfg();
+  showToast('Language: '+(ST.lang==='en'?'English':'සිංහල'),'');
+}
+
+// ═══════════════════════════════════════
+// MODEL
+// ═══════════════════════════════════════
+function applyModelLabel(){
+  const el=document.getElementById('modelLabel');if(el)el.textContent=ST.modelLabel;
+  const s=document.getElementById('stModel');if(s)s.textContent=ST.modelLabel.replace('Nimah ','');
+}
+function selectModel(id,label){
+  ST.model=id;ST.modelLabel=label;ST.cfg.model=id;ST.cfg.modelLabel=label;
+  saveCfg();applyModelLabel();openSub('models');showToast('Model: '+label,'ok');
+}
+
+// ═══════════════════════════════════════
+// FILE
+// ═══════════════════════════════════════
+function triggerFile(accept){const inp=document.getElementById('fileInp');inp.accept=accept;inp.onchange=handleFile;inp.click();}
+function handleFile(e){
+  const files=Array.from(e.target.files);if(!files.length)return;
+  const isChat=document.getElementById('chat').classList.contains('active');
+  const arr=isChat?ST.atChat:ST.atHome;
+  files.forEach(f=>arr.push({name:f.name,type:f.type}));
+  updAtt(isChat?'chat':'home');
+  e.target.value='';
+}
+function updAtt(scr){
+  const arr=scr==='chat'?ST.atChat:ST.atHome;
+  const el=document.getElementById(scr==='chat'?'chatAtt':'homeAtt');
+  if(!el)return;
+  if(!arr.length){el.style.display='none';el.innerHTML='';return;}
+  el.style.display='flex';
+  el.innerHTML=arr.map((a,i)=>`<div class="attach-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>${xss(a.name.slice(0,14))}<button onclick="rmAtt('${scr}',${i})"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>`).join('');
+}
+function rmAtt(s,i){if(s==='chat')ST.atChat.splice(i,1);else ST.atHome.splice(i,1);updAtt(s);}
+
+// ═══════════════════════════════════════
+// SEARCH
+// ═══════════════════════════════════════
+function openSrch(){document.getElementById('srchModal').classList.remove('hidden');document.getElementById('srchInp').focus();doSearch('');}
+function closeSrch(){document.getElementById('srchModal').classList.add('hidden');}
+function doSearch(q){
+  const el=document.getElementById('srchRes');
+  const all=Object.values(ST.chats).sort((a,b)=>(b.updated||0)-(a.updated||0));
+  const f=q?all.filter(c=>c.title?.toLowerCase().includes(q.toLowerCase())||c.msgs?.some(m=>m.content?.toLowerCase().includes(q.toLowerCase()))):all;
+  if(!f.length){el.innerHTML='<div style="padding:16px;text-align:center;color:var(--text3);font-size:12px">No results</div>';return;}
+  el.innerHTML=f.slice(0,20).map(c=>{
+    const mx=q?c.msgs?.find(m=>m.content?.toLowerCase().includes(q.toLowerCase())):null;
+    return `<div class="srch-item" onclick="loadChat('${c.id}');closeSrch()">
+      <div class="srch-item-t">${xss(c.title||'New Chat')}</div>
+      ${mx?`<div class="srch-item-m">${xss(mx.content.slice(0,55))}…</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════
+// ADMIN PANELS
+// ═══════════════════════════════════════
+const PANELS={
+  api:{
+    title:'API & Keys',
+    render:()=>`
+      <div class="fg"><label class="fl">OpenRouter API Key</label><input class="fi" id="ap_key" type="password" placeholder="sk-or-…" value="${xss(ST.apiKey)}" autocomplete="off"></div>
+      <div class="fg"><label class="fl">System Prompt</label><textarea class="fi" id="ap_sp" rows="7">${xss(ST.sysPr)}</textarea></div>
+      <button class="save-btn" onclick="saveSub()">Save</button>`,
+    save:()=>{
+      ST.apiKey=document.getElementById('ap_key').value.trim();
+      ST.sysPr=document.getElementById('ap_sp').value.trim();
+      ST.cfg.apiKey=ST.apiKey;ST.cfg.sysPr=ST.sysPr;
+      saveCfg();showToast('Saved','ok');
+    }
+  },
+  models:{
+    title:'AI Model Manager',
+    render:()=>`
+      <div style="margin-bottom:10px">
+        <div class="adm-sec-t">Active Models</div>
+        ${MODELS.map((m,i)=>`
+          <div class="model-item${ST.model===m.id?' active-model':''}">
+            <div style="flex:1;min-width:0">
+              <div style="font-size:12.5px;font-weight:600;color:var(--text)">${xss(m.label)}</div>
+              <div style="font-size:10px;color:var(--text3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${xss(m.id)}</div>
+            </div>
+            ${ST.model===m.id?`<span class="mbadge">Default</span>`:`<button onclick="selectModel('${m.id}','${m.label}')" style="padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);font-size:10.5px;cursor:pointer;font-family:var(--font)">Set Default</button>`}
+            <label class="toggle-sw" style="flex-shrink:0"><input type="checkbox" ${m.enabled?'checked':''} onchange="toggleModelEnabled(${i},this.checked)"><span class="tslider"></span></label>
+          </div>`).join('')}
+      </div>
+      <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:14px">
+        <div class="adm-sec-t">Add New Model</div>
+        <div class="fg"><label class="fl">Display Name</label><input class="fi" id="nm_label" placeholder="Nimah Custom V1"></div>
+        <div class="fg"><label class="fl">OpenRouter Model ID</label><input class="fi" id="nm_id" placeholder="openai/gpt-4o"></div>
+        <button class="save-btn" onclick="addModel()">Add Model</button>
+      </div>`,
+    save:()=>showToast('Models saved','ok')
+  },
+  prompts:{
+    title:'Prompt Manager',
+    render:()=>`
+      <div class="fg"><label class="fl">System Prompt</label><textarea class="fi" id="ap_sp2" rows="9">${xss(ST.sysPr)}</textarea></div>
+      <div class="adm-sec-t" style="margin-top:12px">Quick Presets</div>
+      ${['You are a professional coding assistant for NIMAH CORE INTELLIGENCE. Help users write clean, efficient code.','You are a creative writing assistant. Help users craft compelling stories and content.','You are a research assistant. Always provide detailed, accurate information.','Respond only in Sinhala (සිංහල).'].map(p=>`<div class="adm-row" onclick="document.getElementById('ap_sp2').value=\`${p.replace(/`/g,'\\`')}\`"><div class="adm-rt-title" style="font-size:12px;color:var(--text2)">${p.slice(0,55)}…</div></div>`).join('')}
+      <button class="save-btn" style="margin-top:10px" onclick="saveSub()">Save Prompt</button>`,
+    save:()=>{ST.sysPr=document.getElementById('ap_sp2').value;ST.cfg.sysPr=ST.sysPr;saveCfg();showToast('Prompt saved','ok');}
+  },
+  voice:{
+    title:'Voice Settings',
+    render:()=>`
+      <div class="trow"><span style="font-size:12.5px;color:var(--text)">Auto-speak AI responses</span><label class="toggle-sw"><input type="checkbox" id="ap_as" ${ST.cfg.autoSpeak?'checked':''}><span class="tslider"></span></label></div>
+      <div class="trow"><span style="font-size:12.5px;color:var(--text)">Text-to-Speech</span><label class="toggle-sw"><input type="checkbox" id="ap_tts" ${ST.tts?'checked':''}><span class="tslider"></span></label></div>
+      <div class="fg" style="margin-top:12px"><label class="fl">Default Language</label>
+        <select class="fi" id="ap_lang"><option value="en" ${ST.lang==='en'?'selected':''}>English</option><option value="si" ${ST.lang==='si'?'selected':''}>සිංහල (Sinhala)</option></select>
+      </div>
+      <button class="save-btn" onclick="saveSub()">Save</button>`,
+    save:()=>{ST.cfg.autoSpeak=document.getElementById('ap_as').checked;ST.tts=document.getElementById('ap_tts').checked;ST.cfg.tts=ST.tts;ST.lang=document.getElementById('ap_lang').value;ST.cfg.lang=ST.lang;saveCfg();showToast('Saved','ok');}
+  },
+  branding:{
+    title:'Branding & Theme',
+    render:()=>`
+      <div class="fg"><label class="fl">App Display Name</label><input class="fi" id="ap_name" value="${xss(ST.cfg.appName||'NIMAH CORE INTELLIGENCE')}"></div>
+      <div class="fg"><label class="fl">Accent Color</label><input class="fi" type="color" id="ap_col" value="${ST.cfg.primaryColor||'#06b6d4'}" style="height:46px;cursor:pointer"></div>
+      <button class="save-btn" onclick="saveSub()">Save Branding</button>`,
+    save:()=>{ST.cfg.appName=document.getElementById('ap_name').value;ST.cfg.primaryColor=document.getElementById('ap_col').value;document.documentElement.style.setProperty('--primary',ST.cfg.primaryColor);saveCfg();showToast('Branding saved','ok');}
+  },
+  homepage:{
+    title:'Homepage Builder',
+    render:()=>`
+      <div class="fg"><label class="fl">Hero Headline</label><input class="fi" id="ap_hh" value="${xss(ST.cfg.heroHeadline||'Create. Discover. Build.')}"></div>
+      <div class="fg"><label class="fl">Hero Eyebrow</label><input class="fi" id="ap_hs" value="${xss(ST.cfg.heroSub||'NIMAH CORE INTELLIGENCE')}"></div>
+      <button class="save-btn" onclick="saveSub()">Save Homepage</button>`,
+    save:()=>{
+      ST.cfg.heroHeadline=document.getElementById('ap_hh').value;
+      ST.cfg.heroSub=document.getElementById('ap_hs').value;
+      saveCfg();
+      const h=document.querySelector('.hero-headline');if(h)h.textContent=ST.cfg.heroHeadline||'Create. Discover. Build.';
+      const e=document.querySelector('.hero-eyebrow');if(e)e.textContent=ST.cfg.heroSub||'NIMAH CORE INTELLIGENCE';
+      showToast('Homepage updated','ok');
+    }
+  },
+  security:{
+    title:'Security Center',
+    render:()=>`
+      <div class="trow"><span style="font-size:12.5px;color:var(--text)">XSS Protection</span><span style="color:var(--success);font-size:11.5px">✓ Active</span></div>
+      <div class="trow"><span style="font-size:12.5px;color:var(--text)">Input Sanitization</span><span style="color:var(--success);font-size:11.5px">✓ Active</span></div>
+      <div class="trow"><span style="font-size:12.5px;color:var(--text)">Admin Lock</span><span style="color:var(--success);font-size:11.5px">✓ Active</span></div>
+      <div class="adm-sec-t" style="margin-top:14px">Users</div>
+      ${(()=>{const users=JSON.parse(localStorage.getItem('nci_users')||'{}');const list=Object.values(users);return list.length?list.map(u=>`<div class="trow"><span style="font-size:12px;color:var(--text)">${xss(u.name)} <span style="color:var(--text3);font-size:10px">${xss(u.email)}</span></span><span style="color:var(--text3);font-size:10px">${new Date(u.created).toLocaleDateString()}</span></div>`).join(''):'<div style="color:var(--text3);font-size:11.5px;padding:10px 0">No registered users.</div>';})()}`,
+    save:()=>{}
+  },
+  analytics:{
+    title:'Analytics',
+    render:()=>{
+      const tc=Object.keys(ST.chats).length;
+      const tm=Object.values(ST.chats).reduce((a,c)=>a+(c.msgs?.length||0),0);
+      return `<div class="adm-grid" style="margin-bottom:12px">
+        <div class="adm-stat"><div class="adm-stat-v">${tc}</div><div class="adm-stat-l">Chats</div></div>
+        <div class="adm-stat"><div class="adm-stat-v">${tm}</div><div class="adm-stat-l">Messages</div></div>
+        <div class="adm-stat"><div class="adm-stat-v">${Math.floor(tm/2)||0}</div><div class="adm-stat-l">AI Replies</div></div>
+        <div class="adm-stat"><div class="adm-stat-v">${Object.keys(JSON.parse(localStorage.getItem('nci_users')||'{}')).length}</div><div class="adm-stat-l">Users</div></div>
+      </div><div style="color:var(--text3);font-size:11.5px;text-align:center;padding:10px">Connect Firebase for detailed real-time analytics.</div>`;
+    },
+    save:()=>{}
+  },
+  maintenance:{
+    title:'Maintenance',
+    render:()=>`
+      <div class="trow"><span style="font-size:12.5px;color:var(--text)">Maintenance Mode</span><label class="toggle-sw"><input type="checkbox" id="ap_mnt" ${ST.cfg.maint?'checked':''}><span class="tslider"></span></label></div>
+      <div class="fg" style="margin-top:12px"><label class="fl">Maintenance Message</label><input class="fi" id="ap_mm" value="${xss(ST.cfg.maintMsg||'Temporarily unavailable.')}"></div>
+      <button class="save-btn" style="background:var(--danger);margin-bottom:8px" onclick="if(confirm('Clear ALL chat history? This cannot be undone.')){localStorage.removeItem('nci_chats');ST.chats={};renderSBList();showToast('All chats cleared','ok')}">Clear All Chats</button>
+      <button class="save-btn" onclick="saveSub()">Save</button>`,
+    save:()=>{ST.cfg.maint=document.getElementById('ap_mnt').checked;ST.cfg.maintMsg=document.getElementById('ap_mm').value;saveCfg();showToast('Saved','ok');}
+  },
+  notifications:{
+    title:'Notifications',
+    render:()=>`
+      <div class="trow"><span style="font-size:12.5px;color:var(--text)">Push Notifications</span><label class="toggle-sw"><input type="checkbox" id="ap_push" ${ST.cfg.push?'checked':''}><span class="tslider"></span></label></div>
+      <div class="fg" style="margin-top:12px"><label class="fl">Email Address</label><input class="fi" id="ap_ea" type="email" placeholder="admin@example.com" value="${xss(ST.cfg.emailAddr||'')}"></div>
+      <button class="save-btn" onclick="saveSub()">Save</button>`,
+    save:()=>{ST.cfg.push=document.getElementById('ap_push').checked;ST.cfg.emailAddr=document.getElementById('ap_ea').value;saveCfg();showToast('Saved','ok');}
+  }
+};
+
+let curSub=null;
+function openAdminPanel(key){
+  // Only open model picker from home, not full admin
+  if(key==='models'&&!document.getElementById('admin').classList.contains('active')){
+    showModelPicker();return;
+  }
+  openSub(key);
+}
+function showModelPicker(){
+  // Quick model selector without admin panel
+  const enabled=MODELS.filter(m=>m.enabled);
+  const html=`<div style="padding:12px 14px;border-bottom:1px solid var(--border);font-size:12px;font-weight:700;color:var(--text2);letter-spacing:.5px;text-transform:uppercase">Select Model</div>`+
+    enabled.map(m=>`<div onclick="selectModelDirect('${m.id}','${m.label}')" style="padding:11px 14px;border-bottom:1px solid rgba(39,39,42,.4);cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px">
+      <div>
+        <div style="font-size:12.5px;font-weight:600;color:var(--text)">${xss(m.label)}</div>
+      </div>
+      ${ST.model===m.id?`<span class="mbadge">Active</span>`:''}
+    </div>`).join('');
+  const ov=document.createElement('div');
+  ov.className='modal-ov';ov.id='modelPickerOv';
+  ov.innerHTML=`<div class="modal" style="padding:0;overflow:hidden;max-height:70vh;overflow-y:auto">${html}<div style="padding:10px"><button onclick="closeModelPicker()" style="width:100%;padding:9px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);font-size:12.5px;font-family:var(--font);cursor:pointer">Cancel</button></div></div>`;
+  document.body.appendChild(ov);
+}
+function closeModelPicker(){const e=document.getElementById('modelPickerOv');if(e)e.remove();}
+function selectModelDirect(id,label){
+  selectModel(id,label);closeModelPicker();
+}
+function openSub(key){
+  const p=PANELS[key];if(!p)return;
+  curSub=key;
+  document.getElementById('subTitle').textContent=p.title;
+  document.getElementById('subBody').innerHTML=p.render();
+  document.getElementById('subPanel').classList.add('on');
+}
+function closeSub(){document.getElementById('subPanel').classList.remove('on');curSub=null;}
+function saveSub(){if(curSub&&PANELS[curSub])PANELS[curSub].save();}
+function toggleModelEnabled(i,v){MODELS[i].enabled=v;saveModels();}
+function addModel(){
+  const label=document.getElementById('nm_label')?.value.trim();
+  const id=document.getElementById('nm_id')?.value.trim();
+  if(!label||!id){showToast('Fill both fields','warn');return;}
+  MODELS.push({id,label,enabled:true});saveModels();openSub('models');showToast('Model added','ok');
+}
+
+// ═══════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════
+function doLogin(){
+  const e=document.getElementById('loginEmail').value.trim();
+  const p=document.getElementById('loginPw').value;
+  if(!e||!p){showToast('Please fill all fields','warn');return;}
+  if(!e.includes('@')){showToast('Invalid email','err');return;}
+  const users=JSON.parse(localStorage.getItem('nci_users')||'{}');
+  if(!users[e]){showToast('Account not found','err');return;}
+  if(users[e].pw!==btoa(p)){showToast('Wrong password','err');return;}
+  ST.user=users[e];
+  if(document.getElementById('rememberMe').checked){
+    localStorage.setItem('nci_session',JSON.stringify(ST.user));
+  }else{
+    localStorage.removeItem('nci_session');
+  }
+  showToast('Welcome back, '+ST.user.name,'ok');
+  showScreen('home');
+}
+function doRegister(){
+  const name=document.getElementById('regName').value.trim();
+  const uname=document.getElementById('regUser').value.trim();
+  const email=document.getElementById('regEmail').value.trim();
+  const pw=document.getElementById('regPw').value;
+  const pw2=document.getElementById('regPw2').value;
+  if(!name||!uname||!email||!pw||!pw2){showToast('Fill all fields','warn');return;}
+  if(!email.includes('@')){showToast('Invalid email','err');return;}
+  if(pw.length<6){showToast('Password min 6 characters','warn');return;}
+  if(pw!==pw2){showToast('Passwords do not match','err');return;}
+  const users=JSON.parse(localStorage.getItem('nci_users')||'{}');
+  if(users[email]){showToast('Email already registered','err');return;}
+  users[email]={name,username:uname,email,pw:btoa(pw),created:Date.now(),verified:false};
+  localStorage.setItem('nci_users',JSON.stringify(users));
+  showToast('Account created! Please sign in.','ok');
+  showScreen('login');
+}
+function doForgot(){
+  const e=document.getElementById('forgotEmail').value.trim();
+  if(!e||!e.includes('@')){showToast('Enter a valid email','warn');return;}
+  showToast('If this email exists, a reset link will be sent.','ok');
+}
+function checkPwStrength(pw){
+  const el=document.getElementById('pwStr');if(!el)return;
+  let s=0;
+  if(pw.length>=6)s++;if(pw.length>=10)s++;if(/[A-Z]/.test(pw))s++;if(/[0-9]/.test(pw))s++;if(/[^A-Za-z0-9]/.test(pw))s++;
+  const cols=['var(--danger)','var(--danger)','var(--warning)','var(--warning)','var(--success)'];
+  const ws=['20%','35%','55%','75%','100%'];
+  el.style.background=cols[Math.min(s,4)];el.style.width=ws[Math.min(s,4)];
+}
+
+// ═══════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════
+function xss(s){if(!s)return '';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');}
+function md(txt){
+  if(!txt)return '';
+  let h=xss(txt);
+  h=h.replace(/```(\w*)\n?([\s\S]*?)```/g,(_,l,c)=>`<pre><code>${c}</code></pre>`);
+  h=h.replace(/`([^`]+)`/g,'<code>$1</code>');
+  h=h.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+  h=h.replace(/\*([^*]+)\*/g,'<em>$1</em>');
+  h=h.replace(/^### (.+)$/gm,'<h3>$1</h3>');
+  h=h.replace(/^## (.+)$/gm,'<h2>$1</h2>');
+  h=h.replace(/^# (.+)$/gm,'<h1>$1</h1>');
+  h=h.replace(/^[\-\*] (.+)$/gm,'<li>$1</li>');
+  h=h.replace(/^\d+\. (.+)$/gm,'<li>$1</li>');
+  h=h.replace(/^---$/gm,'<hr>');
+  h=h.replace(/\n/g,'<br>');
+  return h;
+}
+function autoH(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,96)+'px';}
+let _tt=null;
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');if(!t)return;
+  t.textContent=msg;t.className='toast'+(type?' '+type:'');
+  t.classList.add('show');
+  clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),3000);
+}
+function updateStats(){
+  const tc=Object.keys(ST.chats).length;
+  const tm=Object.values(ST.chats).reduce((a,c)=>a+(c.msgs?.length||0),0);
+  const e1=document.getElementById('stChats');if(e1)e1.textContent=tc;
+  const e2=document.getElementById('stMsgs');if(e2)e2.textContent=tm;
+}
+</script>
+</body>
+</html>
